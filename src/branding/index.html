@@ -1,0 +1,604 @@
+
+<!DOCTYPE html>
+<html manifest="app.manifest">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+    <!-- Стили, необходимые для работы брендинга -->
+    <link rel="stylesheet" media="all" href="//static.wi-fi.ru/brandings/_cacheAssets/branding.css">
+    <script>
+        function onUpdateReady() {
+            window.location.reload();
+        }
+        window.applicationCache.addEventListener('updateready', onUpdateReady);
+        if(window.applicationCache.status === window.applicationCache.UPDATEREADY) {
+            onUpdateReady();
+        }
+    </script>
+    <!--
+        Скрипт, содержащий конфигурацию
+        Разрешается изменять занчения полей согласно возможным значениям.
+        Запрещено добавлять свои поля, исполняемый код
+     -->
+    <script>
+        window.settings = {
+            // Использование подложки. Значение 'html' указывает на использование
+            // html файла /src/background/index.html в качестве фона.
+            // Если значением является валидный css цвет, он будет использован в качестве фона,
+            // html файл /src/background/index.html будет проигнорирован
+            background: 'html', // возможные значения: 'html' или любой валидный css цвет
+
+            // Указание цвета отдельно для фона шапки
+            header: {
+                backgroundColor: 'transparent' // возможные значения: любой валидный css цвет
+            },
+
+            // Указание цвета отдельно для футера
+            footer:{
+                backgroundColor: 'transparent' // возможные значения: любой валидный css цвет
+            },
+
+            // Стилизация кнопки подключения к интернету
+            joinInternet:{
+                backgroundColor:'#52c0ee', // возможные значения: любой валидный css цвет
+                color: '#fff', // возможные значения: любой валидный css цвет
+                presetArrow: 'white', // возможные значения: 'black', 'white'
+                presetDelimiter: 'white', // возможные значения: 'black', 'white'
+                presetIcon: 'white' // возможные значения: 'black', 'white'
+            },
+
+            // Стилизация кнопки отключения рекламы
+            premium:{
+                backgroundColor:'#000', // возможные значения: любой валидный css цвет
+                color:'#fff', // возможные значения: любой валидный css цвет
+                presetArrow: 'white', // возможные значения: 'black', 'white'
+                presetDelimiter: 'white', // возможные значения: 'black', 'white'
+                presetIcon: 'white' // возможные значения: 'black', 'white'
+            },
+
+            // Цвет кнопки поддержки
+            presetSupportButton:'white', // возможные значения: 'black', 'white'
+
+            // Цвет кнопки смены языка
+            presetLanguageButton:'white', // возможные значения: 'black', 'white'
+
+            // Цвет текста ссылки на оферту
+            presetTermsOfUse:'white' // возможные значения: 'black', 'white'
+        };
+    </script>
+
+    <style>
+    	*, *:before, *:after {
+		  box-sizing: border-box;
+		}
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        body {
+     
+            font-family: 'Roboto', sans-serif;
+        }
+        .wrapper {
+            overflow: hidden;
+            width: 100vw;
+            box-sizing: border-box;
+        }
+        .main {
+            margin: 0 auto;
+            height: 100%;
+            width: 100%;
+            /* max-width: ; */
+            position: relative;
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(0.9);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        @keyframes ice2 {
+          0% {
+            transform: translate(-80px, 0);
+          }
+          25% {
+            transform: translate(-60px, 25vh);
+          }
+          50% {
+            transform: translate(-40px, 50vh);
+          }
+          75% {
+            transform: translate(-20px, 75vh);
+          }
+          100% {
+            transform: translate(0, 100vh);
+          }
+        }
+
+        @keyframes ice {
+          0% {
+            transform: translate(0, 0);
+          }
+          25% {
+            transform: translate(20px, 25vh);
+          }
+          50% {
+            transform: translate(40px, 50vh);
+          }
+          75% {
+            transform: translate(60px, 75vh);
+          }
+          100% {
+            transform: translate(80px, 100vh);
+          }
+        }
+
+        @keyframes ice_big2 {
+          0% {
+            transform: translate(-80px, 0);
+          }
+          25% {
+            transform: translate(-60px, 25vh);
+          }
+          50% {
+            transform: translate(-40px, 50vh);
+          }
+          75% {
+            transform: translate(-20px, 75vh);
+          }
+          100% {
+            transform: translate(0, 100vh);
+          }
+        }
+
+        @keyframes ice_big {
+          0% {
+            transform: translate(0, 0);
+          }
+          25% {
+            transform: translate(20px, 25vh);
+          }
+          50% {
+            transform: translate(40px, 50vh);
+          }
+          75% {
+            transform: translate(60px, 75vh);
+          }
+          100% {
+            transform: translate(80px, 100vh);
+          }
+        }
+
+        .main .logo {
+          width: 48px;
+          height: 48px;
+
+          position: absolute;
+          top: 15%;
+          left: calc(50% - 24px);
+        }
+
+        .main .ice {
+          width: 100%;
+          height: 100%;
+
+          position: absolute;
+          top: 0;
+          left: 0;
+
+          animation: ice 8s infinite linear;
+        }
+
+        .main .ice2 {
+          top: -100vh;
+
+          animation: ice2 8s infinite linear;
+        }
+
+        .main .ice_big {
+          width: 100%;
+          height: 100%;
+
+          position: absolute;
+          top: 0;
+          left: 0;
+
+          animation: ice_big 8s infinite linear;
+        }
+
+        .main .ice_big2 {
+          top: -100vh;
+
+          animation: ice_big2 8s infinite linear;
+        }
+
+        .main .for-him {
+          width: 110px;
+          height: 110px;
+
+          position: absolute;
+          top: 32%;
+          left: 28%;
+        }
+
+        .main .for-her {
+          width: 100px;
+          height: 100px;
+
+          position: absolute;
+          top: 66%;
+          left: 65%;
+        }
+
+        .main .title {
+          width: 296px;
+          height: 85px;
+
+          position: absolute;
+          top: 23%;
+          left: calc(50% - 148px);
+        }
+
+        .main .buy-gift {
+          width: 240px;
+          height: 128px;
+
+          position: absolute;
+          top: 76%;
+          left: calc(50% - 120px);
+
+          animation: pulse 2s infinite linear;
+        }
+
+        .main .legal {
+          width: 252px;
+          height: 135px;
+
+          position: absolute;
+          top: 84%;
+          left: calc(50% - 126px);
+        }
+
+        @media (min-height: 800px) {
+            .main .logo {
+                width: 60px;
+                height: 60px;
+
+                top: 15%;
+                left: calc(50% - 30px);
+            }
+
+            .main .buy-gift {
+                width: 288px;
+                height: 153px;
+
+                top: 76%;
+                left: calc(50% - 144px);
+            }
+
+            .main .legal {
+                width: 362px;
+                height: 194px;
+
+                top: 84%;
+                left: calc(50% - 181px);
+            }
+        }
+
+        @media (min-width: 1023px) {
+
+        }
+
+        @media (max-width: 1024px) {
+            .main .for-him {
+                top: 34%;
+                left: 15%;
+            }
+
+            .main .for-her {
+                top: 64%;
+                left: 77%;
+            }
+        }
+
+        @media (max-width: 768px) {
+          .main .ice {
+            width: 120%;
+            height: 100%;
+
+            left: -10%;
+          }
+
+          .main .ice_big {
+            width: 120%;
+            height: 100%;
+
+            left: -10%;
+          }
+
+          .main .for-him {
+              left: 19%;
+          }
+
+          .main .for-her {
+              top: 63%;
+              left: 72%;
+          }
+
+
+        }
+        @media (max-width: 600px) {
+          .main .ice {
+            width: 140%;
+            height: 100%;
+
+            left: -20%;
+          }
+
+          .main .ice_big {
+            width: 140%;
+            height: 100%;
+
+            left: -20%;
+          }
+
+          .main .for-him {
+            top: 30%;
+            left: 17%;
+          }
+
+          .main .for-her {
+            top: 53%;
+            left: 69%;
+          }
+
+          .main .title {
+            width: 238px;
+            height: 68px;
+
+            top: 23%;
+            left: calc(50% - 119px);
+          }
+
+            .main .buy-gift {
+                width: 192px;
+                height: 102px;
+
+                top: 78%;
+                left: calc(50% - 96px);
+            }
+
+            .main .legal {
+                width: 216px;
+                height: 115px;
+
+                top: 86%;
+                left: calc(50% - 108px);
+            }
+        }
+
+        @media (max-width: 414px) {
+          .main .ice {
+            width: 180%;
+            height: 100%;
+
+            left: -40%;
+          }
+
+          .main .ice_big {
+            width: 180%;
+            height: 100%;
+
+            left: -40%;
+          }
+
+          .main .for-him {
+            width: 80px;
+            height: 80px;
+
+
+              top: 34%;
+              left: 0%;
+          }
+
+          .main .for-her {
+            width: 70px;
+            height: 70px;
+
+              top: 66%;
+              left: 83%;
+          }
+
+          .main .logo {
+            top: 10%;
+          }
+        }
+        @media (max-width: 375px) and (max-height: 668px) {
+
+        }
+        @media (max-width: 375px) {
+          .main .for-him {
+            width: 70px;
+            height: 70px;
+
+            top: 36%;
+            left: 1%;
+          }
+
+          .main .for-her {
+            width: 60px;
+            height: 60px;
+
+            top: 66%;
+            left: 83%;
+          }
+
+          .main .buy-gift {
+            top: 76%;
+          }
+        }
+
+        @media (max-height: 500px) {
+            .main .legal {
+                top: 83%;
+            }
+        }
+
+        @media (max-width: 340px) {
+          .main .title {
+            width: 166px;
+            height: 48px;
+
+            top: 25%;
+            left: calc(50% - 83px);
+          }
+
+          .main .for-her {
+              top: 72%;
+              left: 81%;
+          }
+
+          .main .buy-gift {
+            width: 86px;
+            height: 46px;
+
+            top: 81%;
+            left: calc(50% - 43px);
+          }
+
+          .main .legal {
+            top: 79%;
+          }
+        }
+        @media (max-width: 320px) { 
+
+        }
+        @media (max-width: 320px) and (max-height: 200px) {
+
+        }
+        @media (min-width: 1024px) {
+            .main {
+                width: 1024px;
+             }
+        }
+
+        @media (min-width: 600px) and (max-height: 668px) {
+          .main .logo {
+            width: 48px;
+            height: 48px;
+
+            top: 8%;
+            left: calc(50% - 24px);
+          }
+
+          .main .title {
+            width: 296px;
+            height: 85px;
+            top: 18%;
+            left: calc(50% - 148px);
+          }
+        }
+
+        @media (min-width: 500px) and (max-height: 480px) {
+          .main .logo {
+            top: 15%;
+          }
+
+          .main .title {
+            width: 132px;
+            height: 38px;
+            top: 23%;
+            left: calc(50% - 66px);
+          }
+
+          .main .for-him {
+            width: 70px;
+            height: 70px;
+            top: 27%;
+            left: 20%;
+          }
+
+          .main .for-her {
+            width: 60px;
+            height: 60px;
+            top: 53%;
+            left: 71%;
+          }
+        }
+
+        @media (min-width: 600px) and (max-height: 480px) {
+          .main .for-him {
+            left: 24%;
+          }
+
+          .main .for-her {
+            left: 68%;
+          }
+        }
+
+        @media (min-width: 768px) and (max-height: 480px) {
+          .main .for-him {
+            left: 28%;
+          }
+
+          .main .for-her {
+            left: 66%;
+          }
+        }
+
+        @font-face {
+            font-family: "Roboto";
+            src: url("../fonts/Roboto-Regular.ttf") format("truetype");
+            font-style: normal;
+            font-weight: normal;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Разместите html разметку здесь -->
+    <a href="http://target.ru/" data-event-click="1">
+    <div class="main" >
+        <img class="ice ice1" src="../image/ice.png" alt="">
+        <img class="ice ice2" src="../image/ice.png" alt="">
+        <img class="ice_big ice_big1" src="../image/ice_big.png" alt="">
+        <img class="ice_big ice_big2" src="../image/ice_big.png" alt="">
+
+        <img class="logo" src="../image/logo.svg" alt="">
+        <img class="title" src="../image/title.png" alt="">
+
+        <img class="for-him" src="../image/for-him.png" alt="">
+        <img class="for-her" src="../image/for-her.png" alt="">
+
+        <img class="buy-gift" src="../image/buy-gift.png" alt="">
+        <img class="legal" src="../image/legal.png" alt="">
+    </div>
+    </a>
+    <!-- Скрипт, необходимый для работы брендинга -->
+    <script src="//static.wi-fi.ru/brandings/_cacheAssets/branding.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function(event) { 
+        parent.parent.postMessage(JSON.stringify({
+          source: 'branding',
+          type: 'event',
+          eventId: 10,
+          href: null
+        }), '*');
+      });
+    </script>
+</body>
+</html>
